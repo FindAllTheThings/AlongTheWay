@@ -33,4 +33,6 @@ module.exports = function(grunt) {
     }
   });
   grunt.registerTask('build:dev', [ 'jshint:dev', 'clean:dev', 'copy:dev']);
+  grunt.registerTask('build:d', ['clean:dev', 'copy:dev']);
+
 };
