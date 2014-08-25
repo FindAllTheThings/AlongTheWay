@@ -1,0 +1,41 @@
+      #results-section{
+        min-width: 320px;
+        width:100%;
+      }
+
+      #results-item{
+        min-width: 320px;
+        width: 100%;
+        height: 40px;
+        border:1px;
+      }
+
+        #results-item .food {
+          background-image:url('../../icons/utensils.png');
+          background-color:#FFFFE0;
+        }
+
+        #results-item .restaurant{
+          background-image: url('../../icons/utensils.png');
+          background-color: #BF0C0C;
+        }
+
+        #results-item .gas{
+          background-image: url('../../icons/gas.png');
+          background-color:#F6D215;
+        }
+
+        #results-item .lodging{
+          background-image: url('../../icons/bed.png');
+          background-color:#3A5C78;
+        }
+
+        #results-item .store{
+          background-image: url('../../icons/shopping-cart.png');
+          background-color:#3E3E3E;
+        }
+
+        #results-item .atm{
+          background-image: url('../../icons/money.png');
+          background-color: #A8B9C1;
+        }
