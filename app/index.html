@@ -80,7 +80,9 @@
 
     function findPlaces(path, index) {
      var type = document.getElementById('choose').value;
-     var radius = document.getElementById('radius').value * 1609.34;
+     var radius = document.getElementById('radius').value * 1609.34
+     var timeout = 50;
+
      function loop() {
        var request = {
          location: path[index],
@@ -88,16 +90,21 @@
          types: [type]
        };
        service.radarSearch(request, function (results, status) {
-         if (status != google.maps.places.PlacesServiceStatus.OK) {
-           alert("Request failed: "+status);
+         if (status == google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
            return;
          }
+         if (status == google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
+           
+           timeout += timeout;
+           return;
+         }
+         timeout = 50;
          for (var i = 0, result; result = results[i]; i++) {
            var marker = createMarker(result);
          }
        });
        if (index++ < path.length)
-        setTimeout(loop, 500);
+        setTimeout(loop, timeout);
       }
       loop();
     }
