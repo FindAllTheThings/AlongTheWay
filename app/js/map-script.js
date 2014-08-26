@@ -17,7 +17,7 @@ function initialize() {
   service = new google.maps.places.PlacesService(map);
 }
 
-window.calcRoute = function(){
+window.calcRoute = function() {
   // Clear any previous route boxes from the map
   deleteMarkers();
 
@@ -30,9 +30,11 @@ window.calcRoute = function(){
 // Make the directions request
   directionsService.route(request, function(result, status) {
     if (status == google.maps.DirectionsStatus.OK) {
+
       directionsDisplay.setDirections(result);
       var path = result.routes[0].overview_path;
       findPlaces(path, 0);
+
     } else {
       alert("Directions query failed: " + status);
     }
@@ -40,7 +42,7 @@ window.calcRoute = function(){
 }
 
 function findPlaces(path, index) {
- var type = document.getElementById('choose').value;
+ var type = document.getElementById('place-type').value;
  var radius = document.getElementById('radius').value * 1609.34;
  var timeout = 50;
 
