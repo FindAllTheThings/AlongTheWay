@@ -13,11 +13,11 @@ var MapModel = {
   },
 
   // behaviors
-  reset: function(){
-    for (var i = 0; i < MapModel.markers.length; i++) {
-      MapModel.markers[i].setMap(null);
+  resetMap: function(){
+    for (var i = 0; i < this.markers.length; i++) {
+      this.markers[i].setMap(null);
     }
-    MapModel.markers = [];
+    this.markers = [];
   },
 
   renderRoute: function(){
@@ -31,7 +31,7 @@ var MapModel = {
     this.infowindow = new google.maps.InfoWindow();
     this.service = new google.maps.places.PlacesService( this.map );
   }
-  
+
 };
 
 module.exports = MapModel;

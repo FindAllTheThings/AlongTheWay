@@ -15,8 +15,6 @@ var PlacesModel = {
 
 module.exports = PlacesModel;
 
-
-
 function findPlaces(path, index) {
  var type = document.getElementById('place-type').value;
  var radius = document.getElementById('radius').value * 1609.34;
