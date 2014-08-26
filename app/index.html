@@ -5,36 +5,17 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
+    <!--
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/map.css">
+    <link rel="stylesheet" href="/css/list.css">
+    -->
+    <link rel="stylesheet" href="bundle.css" />
 
     <title>Along the Way</title>
 
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0px;
-        padding: 0px
-      }
-
-      #map-canvas {
-        height: 100%;
-        margin: 0px;
-        padding: 0px
-      }
-
-      body {
-        padding-top: 50px;
-      }
-      .starter-template {
-        padding: 40px 15px;
-        text-align: center;
-      }
-
-    </style>
-
-
-<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
-
-    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
 
     <script>
 
@@ -99,10 +80,13 @@
            timeout += timeout;
            return;
          }
+
          timeout = 50;
+
          for (var i = 0, result; result = results[i]; i++) {
            var marker = createMarker(result);
          }
+
        });
        if (index++ < path.length)
         setTimeout(loop, timeout);
@@ -125,7 +109,7 @@ function createMarker(place) {
   google.maps.event.addListener(marker, 'click', function() {
     service.getDetails(place, function(result, status) {
       if (status != google.maps.places.PlacesServiceStatus.OK) {
-        alert(status);
+        console.log(status);
         return;
       }
       name = result.name;
@@ -149,72 +133,52 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
   <body>
 
-    <style media="screen">
-      #options-wrapper{
-        position:fixed;
-        top:0px;
-        left:0px;
-        right:0px;
-        height:0px;
-        border-bottom:2px solid #ccc;
-        background:rgba(230,230,230,.6);
-        z-index: 100;
-      }
-        #options-wrapper.open{
-          height:100%;
-        }
-        #opt-inner-wrapper{
-          width:320px;
-          margin: 0 auto;
-          overflow:hidden;
-          height:100%;
-        }
+    <div id="options-wrapper" class="open">
 
-        #overlay-handle{
-          position:absolute;
-          bottom:-20px; right:50px;
-          height:20px;
-          width:50px;
-          border:1px solid #ddd;
-          background:#eee;
-          overflow:hidden;
-        }
-            #options-wrapper.open #overlay-handle{
-              bottom:0px;
-            }
+      <div id="progress-bar"></div>
 
-      #map-canvas{
-        margin-bottom:100px;
-      }
-
-      #map-wrapper{
-        min-width:320px;
-        width:100%;
-      }
-
-
-
-    </style>
-
-    <div id="options-wrapper">
         <div id="opt-inner-wrapper">
-            <p>Options</p>
             <div id="panel">
-              <label>Start<input id="address" type="textbox"></label>
-              <label>End<input id="address2" type="textbox"></label>
-              <label>Radius<input id="radius" type="textbox"></label>
-              <input type="button" value="Directions" onclick="calcRoute()">
 
-              <select id="choose">
-                <option value="restaurant">Restaurant</option>
-                <option value="bank">Bank</option>
-                <option value="lodging">Lodging</option>
-                <option value="store">Store</option>
-              </select>
+              <div>
+                <label>Start</label>
+                <input id="address" type="text">
+              </div>
+
+              <div>
+                <label>Destination</label>
+                <input id="address2" type="text">
+              </div>
+
+              <div>
+                <label>Search Distance (from route)</label>
+                <select id="radius">
+                  <option value=".25">1/4 mile</option>
+                  <option value=".5">1/2 mile</option>
+                  <option value="1">1 mile</option>
+                  <option value="2">2 miles</option>
+                  <option value="5">5 miles</option>
+                  <option value="10">10 miles</option>
+                </select>
+              </div>
+
+              <div>
+                <select id="choose">
+                  <option value="restaurant">Restaurant</option>
+                  <option value="bank">Bank</option>
+                  <option value="lodging">Lodging</option>
+                  <option value="store">Store</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <input id="go" type="submit" value="Go!" onclick="calcRoute()">
             </div>
         </div>
+
         <div id="overlay-handle">
-            <a id="show-hide-button">show/hide</a>
+            <img src="icons/menu.png"  />
         </div>
     </div>
 
@@ -227,13 +191,15 @@ google.maps.event.addDomListener(window, 'load', initialize);
       <div id="results-item" class=""></div>
     </div>
 
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
-    <script src="dist/js/bootstrap.min.js"></script>
     <script charset="utf-8">
       $(function(){
-        $('#show-hide-button').on('click',function(){
+        $('#overlay-handle').on('click',function(){
+          $('#options-wrapper').toggleClass('open');
+        });
+
+        $('#go').on('click', function(){
           $('#options-wrapper').toggleClass('open');
         });
       });

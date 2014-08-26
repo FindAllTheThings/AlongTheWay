@@ -2,6 +2,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   grunt.initConfig({
     jshint: {
@@ -12,11 +13,17 @@ module.exports = function(grunt) {
         src: ['dist/']
       }
     },
+    concat: {
+      dev: {
+        src: ['app/css/**/*.css'],
+        dest: 'dist/bundle.css'
+      },
+    },
     copy: {
       dev: {
         expand: true,
         cwd: 'app/',
-        src: ['*.html', 'css/**/*.css', 'js/**/*.js'],
+        src: ['*.html', 'js/**/*.js', 'icons/**/*.*','*.png' ],
         dest: 'dist/',
         filter: 'isFile'
       }
@@ -33,6 +40,6 @@ module.exports = function(grunt) {
     }
   });
   grunt.registerTask('build:dev', [ 'jshint:dev', 'clean:dev', 'copy:dev']);
-  grunt.registerTask('build:d', ['clean:dev', 'copy:dev']);
+  grunt.registerTask('build:d', ['clean:dev', 'copy:dev', 'concat:dev']);
 
 };
