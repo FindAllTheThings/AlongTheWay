@@ -3,6 +3,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-browserify');
 
   grunt.initConfig({
     jshint: {
@@ -40,6 +41,6 @@ module.exports = function(grunt) {
     }
   });
   grunt.registerTask('build:dev', [ 'jshint:dev', 'clean:dev', 'copy:dev']);
-  grunt.registerTask('build:d', ['clean:dev', 'copy:dev', 'concat:dev']);
+  grunt.registerTask('build:d', ['clean:dev', 'copy:dev', 'concat:dev', 'browserify']);
 
 };
