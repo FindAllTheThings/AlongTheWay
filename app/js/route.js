@@ -2,8 +2,6 @@ var map = require('./map');
 var places = require('./places');
 var directionsService = new google.maps.DirectionsService();
 
-
-
 var RouteModel = {
 
   test: function(){
