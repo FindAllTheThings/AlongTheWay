@@ -9,12 +9,12 @@ var MapView = Backbone.View.extend({
   id: 'map-canvas',
   tagName: 'div',
   initialize: function(){
+    GoogleMapsLoader.LIBRARIES = 'places';
     GoogleMapsLoader.load();
     this.render();
   },
   render: function(){
     var _this = this;
-
     GoogleMapsLoader.onLoad(function(google){
       _this.map = new google.maps.Map( _this.el, _this.model.attributes.options);
       _this.directionsDisplay = new google.maps.DirectionsRenderer();
