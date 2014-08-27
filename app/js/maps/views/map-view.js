@@ -21,7 +21,6 @@ var MapView = Backbone.View.extend({
       _this.directionsDisplay.setMap(_this.map);
       _this.service = new google.maps.places.PlacesService(_this.map);
     });
-
     return this;
   },
 
