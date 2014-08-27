@@ -1,41 +1,42 @@
-      #results-section{
-        min-width: 320px;
-        width:100%;
-      }
+#results-section{
+  min-width: 320px;
+  max-width:700px;
+  margin:0 auto;
+}
+#results-section ul{
+  list-style:none;
+}
+.results-item{
+  min-width: 320px;
+  width: auto;
+  padding:5px 5px 5px 75px;
+  margin:5px;
+  border:1px solid #ccc;
+  background-position:left center;
+  background-repeat:no-repeat;
+  background-size: contain;
+}
 
-      #results-item{
-        min-width: 320px;
-        width: 100%;
-        height: 40px;
-        border:1px;
-      }
+.food {
+background-image:url('icons/utensils.png');
+}
 
-        #results-item .food {
-          background-image:url('../../icons/utensils.png');
-          background-color:#FFFFE0;
-        }
+.restaurant{
+background-image: url('icons/utensils.png');
+}
 
-        #results-item .restaurant{
-          background-image: url('../../icons/utensils.png');
-          background-color: #BF0C0C;
-        }
+.gas{
+background-image: url('icons/gas.png');
+}
 
-        #results-item .gas{
-          background-image: url('../../icons/gas.png');
-          background-color:#F6D215;
-        }
+.lodging{
+background-image: url('icons/bed.png');
+}
 
-        #results-item .lodging{
-          background-image: url('../../icons/bed.png');
-          background-color:#3A5C78;
-        }
+.store{
+background-image: url('icons/shopping-cart.png');
+}
 
-        #results-item .store{
-          background-image: url('../../icons/shopping-cart.png');
-          background-color:#3E3E3E;
-        }
-
-        #results-item .atm{
-          background-image: url('../../icons/money.png');
-          background-color: #A8B9C1;
-        }
+.atm{
+background-image: url('icons/money.png');
+}

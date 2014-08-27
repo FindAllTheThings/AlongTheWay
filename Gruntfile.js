@@ -5,7 +5,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-express-server');
+  grunt.loadNpmTasks('grunt-exec');
 
   grunt.initConfig({
     jshint: {
@@ -41,10 +41,20 @@ module.exports = function(grunt) {
         dest: 'dist/bundle.js'
       }
     },
+    watch:{
+      files:['app/**/*.*'],
+      tasks:['build:serve'],
+      options: {
+        interrupt: true,
+      }
+    },
+    exec: {
+      serve: 'node server.js'
+    }
 
   });
 
   grunt.registerTask('build:dev', [ 'jshint:dev', 'clean:dev', 'copy:dev']);
   grunt.registerTask('build:d', ['clean:dev', 'copy:dev', 'concat:dev', 'browserify']);
-
+  grunt.registerTask('build:serve', ['build:d', 'exec:serve']);
 };
