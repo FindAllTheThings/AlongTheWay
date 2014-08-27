@@ -14,12 +14,14 @@ var MapView = Backbone.View.extend({
   },
   render: function(){
     var _this = this;
+
     GoogleMapsLoader.onLoad(function(google){
-      _this.map = new google.maps.Map( _this.el, {zoom: 16, center: {lat: 47.6097, lng: -122.3331}} );
+      _this.map = new google.maps.Map( _this.el, _this.model.attributes.options);
       _this.directionsDisplay = new google.maps.DirectionsRenderer();
       _this.directionsDisplay.setMap(_this.map);
       _this.service = new google.maps.places.PlacesService(_this.map);
     });
+
     return this;
   },
 
