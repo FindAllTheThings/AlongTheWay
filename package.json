@@ -19,7 +19,7 @@
   "homepage": "https://github.com/FindAllTheThings/AlongTheWay",
   "dependencies": {
     "express": "^4.8.5",
-    "google-maps": "^2.0.0"
+    "google-maps":"git://github.com/walkermalling/node-google-maps#develop-libraries-opt"
   },
   "devDependencies": {
     "backbone": "^1.1.2",
