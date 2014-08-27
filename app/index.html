@@ -12,58 +12,10 @@
 
   <body>
 
-    <div id="options-wrapper" class="open">
-
-      <div id="progress-bar"></div>
-
-        <div id="opt-inner-wrapper">
-            <div id="panel">
-
-              <div>
-                <label>Start</label>
-                <input id="address" type="text">
-              </div>
-
-              <div>
-                <label>Destination</label>
-                <input id="address2" type="text">
-              </div>
-
-              <div>
-                <label>Search Distance (from route)</label>
-                <select id="radius">
-                  <option value=".25">1/4 mile</option>
-                  <option value=".5">1/2 mile</option>
-                  <option value="1">1 mile</option>
-                  <option value="2">2 miles</option>
-                  <option value="5">5 miles</option>
-                  <option value="10">10 miles</option>
-                </select>
-              </div>
-
-              <div>
-                <select id="place-type">
-                  <option value="restaurant">Restaurant</option>
-                  <option value="bank">Bank</option>
-                  <option value="lodging">Lodging</option>
-                  <option value="store">Store</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <input id="go" type="submit" value="Go!" />
-            </div>
-        </div>
-
-        <div id="overlay-handle">
-            <img src="icons/menu.png"  />
-        </div>
-    </div>
+    <div id="map-canvas"></div>
 
 
-    <div id="map-wrapper">
-    </div>
+
 
     <div id="results-section">
       <div id="results-item" class=""></div>
