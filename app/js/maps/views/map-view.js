@@ -22,10 +22,26 @@ var MapView = Backbone.View.extend({
     GoogleMapsLoader.load();
     this.render();
     this.loader();
+  },
 
+  loader: function() {
+    var _this = this;
+    GoogleMapsLoader.onLoad(function(google){
+      _this.google = google;
+      _this.map = new _this.google.maps.Map( _this.$('#map-wrapper').get(0), _this.model.attributes.options);
+      _this.directionsDisplay = new _this.google.maps.DirectionsRenderer();
+      _this.directionsDisplay.setMap(_this.map);
+      _this.service = new _this.google.maps.places.PlacesService(_this.map);
+      _this.directionsService = new _this.google.maps.DirectionsService();
+      _this.initializeGeolocation();
+    });
+  },
+
+  initializeGeolocation:function(){
+    var _this = this;
     if(navigator.geolocation){
       navigator.geolocation.watchPosition(function(position){
-        var p = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        var p = new _this.google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         _this.makeMapMarker({
           geometry:{
             location: p
@@ -36,17 +52,6 @@ var MapView = Backbone.View.extend({
     } else {
       console.log('location services unavailable');
     }
-  },
-
-  loader: function() {
-    var _this = this;
-    GoogleMapsLoader.onLoad(function(google){
-      _this.map = new google.maps.Map( _this.$('#map-wrapper').get(0), _this.model.attributes.options);
-      _this.directionsDisplay = new google.maps.DirectionsRenderer();
-      _this.directionsDisplay.setMap(_this.map);
-      _this.service = new google.maps.places.PlacesService(_this.map);
-      _this.directionsService = new google.maps.DirectionsService();
-    });
   },
 
   render: function(){
@@ -76,11 +81,11 @@ var MapView = Backbone.View.extend({
     var request = {
       origin: this.formView.origin,
       destination: this.formView.destination,
-      travelMode: google.maps.DirectionsTravelMode.DRIVING
+      travelMode: _this.google.maps.DirectionsTravelMode.DRIVING
     };
 
     this.directionsService.route(request, function(result,status){
-      if(status == google.maps.DirectionsStatus.OK){
+      if(status == _this.google.maps.DirectionsStatus.OK){
         _this.directionsDisplay.setDirections(result);
         _this.routeResult = result;
         _this.getPlaces();
@@ -99,16 +104,20 @@ var MapView = Backbone.View.extend({
       var request = {
         location: _this.routeResult.routes[0].overview_path[index],
         radius: _this.formView.radius * 1609.34,
-        types: _this.formView.placeTypes,
+        types: [_this.formView.placeType],
         keyword: _this.formView.keyword,
-        openNow: true,
-        minPriceLevel: 1
+        openNow: true
       };
 
+      if(request.types === 'restaurant') request.minPriceLevel = 1;
+
+      console.log('passing keyw: ' + request.keyword);
+      console.log('passing type: ' + request.types);
+
       _this.service.nearbySearch(request, function(results,status){
-        if(status == window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
-          //
-        } else if (status == window.google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT){
+        if(status == _this.google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+          // console.log('status: ' + status);
+        } else if (status == _this.google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT){
           timeout += timeout + 1;
         } else{
           // reset timeout
@@ -152,12 +161,11 @@ var MapView = Backbone.View.extend({
 
   makeMapMarker: function(thisPlace){
     // create a map marker
-    var pin = new google.maps.Marker({
+    var pin = new this.google.maps.Marker({
       map: this.map,
       position: thisPlace.geometry.location
     });
     if( !!thisPlace.customIcon ){
-      console.log('custom marker detected');
       pin.setIcon(thisPlace.customIcon);
     }
   }
