@@ -11,14 +11,5 @@ $(function(){
 
     $('#map-canvas').html(mapView.el);
 
-    function watchLocation(){
-      if(navigator.geolocation){
-        navigator.geolocation.watchPosition(mapView.updateLocation);
-      } else {
-        console.log('location services unavailable');
-      }
-    }
-
-    watchLocation();
 
 });

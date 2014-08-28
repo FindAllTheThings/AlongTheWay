@@ -17,10 +17,25 @@ var MapView = Backbone.View.extend({
   },
 
   initialize: function(){
+    var _this = this;
     GoogleMapsLoader.LIBRARIES = 'places';
     GoogleMapsLoader.load();
     this.render();
     this.loader();
+
+    if(navigator.geolocation){
+      navigator.geolocation.watchPosition(function(position){
+        var p = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        _this.makeMapMarker({
+          geometry:{
+            location: p
+          },
+          customIcon: 'location-marker.png'
+        });
+      });
+    } else {
+      console.log('location services unavailable');
+    }
   },
 
   loader: function() {
@@ -145,28 +160,6 @@ var MapView = Backbone.View.extend({
       console.log('custom marker detected');
       pin.setIcon(thisPlace.customIcon);
     }
-  },
-
-  updateLocation: function(position){
-    console.log(position);
-    this.makeMapMarker({
-      geometry:{
-        location: {
-          lat:position.coords.latitude,
-          lng: position.coords.longitude    
-        }
-      }
-    });
-
-    // this.makeMapMarker({
-    //   geometry: {
-    //     location: {
-    //       lat:position.coords.latitude,
-    //       lng:position.coords.longitude
-    //     }
-    //   },
-    //   customIcon: 'location-marker.png'
-    // });
   }
 
 });
