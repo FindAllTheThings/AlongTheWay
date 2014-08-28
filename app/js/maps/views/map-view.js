@@ -33,6 +33,7 @@ var MapView = Backbone.View.extend({
       _this.directionsDisplay.setMap(_this.map);
       _this.service = new _this.google.maps.places.PlacesService(_this.map);
       _this.directionsService = new _this.google.maps.DirectionsService();
+      _this.infowindow = new _this.google.maps.InfoWindow();
       _this.initializeGeolocation();
     });
   },
@@ -111,9 +112,6 @@ var MapView = Backbone.View.extend({
 
       if(request.types === 'restaurant') request.minPriceLevel = 1;
 
-      console.log('passing keyw: ' + request.keyword);
-      console.log('passing type: ' + request.types);
-
       _this.service.nearbySearch(request, function(results,status){
         if(status == _this.google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
           // console.log('status: ' + status);
@@ -130,6 +128,11 @@ var MapView = Backbone.View.extend({
           }
         }
         // loop
+
+        var percentProgress = index/_this.routeResult.routes[0].overview_path.length * 100;
+        _this.$('#progress-bar').css('width', percentProgress + '%');
+        console.log(percentProgress);
+
         if(index++ < _this.routeResult.routes[0].overview_path.length){
           setTimeout(loopRequest,timeout);
         }
@@ -160,13 +163,23 @@ var MapView = Backbone.View.extend({
   },
 
   makeMapMarker: function(thisPlace){
+    var _this = this;
     // create a map marker
     var pin = new this.google.maps.Marker({
       map: this.map,
       position: thisPlace.geometry.location
     });
+
     if( !!thisPlace.customIcon ){
       pin.setIcon(thisPlace.customIcon);
+    }
+
+    if( !thisPlace.customIcon){
+      this.google.maps.event.addListener(pin,'click',function(){
+        // console.log(_this.infowindow);
+        _this.infowindow.setContent('<p>'+thisPlace.name+'</p>');
+        _this.infowindow.open(_this.map, pin);
+      });
     }
   }
 
