@@ -1,61 +1,166 @@
 /* jshint node: true */
 'use strict';
-var Backbone = require('backbone');
 var $ = require('jquery');
+var _ = require('lodash');
+var Backbone = require('backbone');
 Backbone.$ = $;
+
 var GoogleMapsLoader = require('google-maps');
 var FormView = require('./form-view');
 
 var MapView = Backbone.View.extend({
-  id: 'map-canvas',
-  tagName: 'div',
-
+  id: 'map-view',
+  places: [],
   events: {
-    "click #overlay-handle": "show"
+    "click #overlay-handle": "show",
+    "click #go":"getRoute"
   },
 
   initialize: function(){
+    var _this = this;
     GoogleMapsLoader.LIBRARIES = 'places';
     GoogleMapsLoader.load();
     this.render();
     this.loader();
-    //this.on('render', this.onRender);
-    //this.optionbutton();
+
+    if(navigator.geolocation){
+      navigator.geolocation.watchPosition(function(position){
+        var p = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        _this.makeMapMarker({
+          geometry:{
+            location: p
+          },
+          customIcon: 'location-marker.png'
+        });
+      });
+    } else {
+      console.log('location services unavailable');
+    }
   },
 
   loader: function() {
     var _this = this;
-    console.log(this);
-    console.log(this.$el);
     GoogleMapsLoader.onLoad(function(google){
       _this.map = new google.maps.Map( _this.$('#map-wrapper').get(0), _this.model.attributes.options);
       _this.directionsDisplay = new google.maps.DirectionsRenderer();
       _this.directionsDisplay.setMap(_this.map);
       _this.service = new google.maps.places.PlacesService(_this.map);
-
+      _this.directionsService = new google.maps.DirectionsService();
     });
   },
 
   render: function(){
+    // render map template
     var template = require('../templates/map-template.hbs');
     this.$el.html(template());
+
+    // add form subview
+    this.formView = new FormView({model: this.model});
+    this.$('#opt-inner-wrapper').html(this.formView.el);
+
     return this;
   },
 
-  // optionbutton: function() {
-  //   id: 'options-wrapper';
-  //   var template = require('../templates/options-template.hbs');
-  //   this.$el.append(template());
-  //   return this;
-  // },
-
   show: function() {
-    console.log('handler clicked');
-    var formView = new FormView({model: this.model});
-    console.log(formView.el);
-    this.$('#options-wrapper').html(formView.el);
     this.$('#options-wrapper').toggleClass('open');
+    return this;
   },
+
+  getRoute: function(){
+    var _this = this;
+    this.show();
+
+    this.formView.getRouteParams();
+    this.formView.getPlacesParams();
+
+    var request = {
+      origin: this.formView.origin,
+      destination: this.formView.destination,
+      travelMode: google.maps.DirectionsTravelMode.DRIVING
+    };
+
+    this.directionsService.route(request, function(result,status){
+      if(status == google.maps.DirectionsStatus.OK){
+        _this.directionsDisplay.setDirections(result);
+        _this.routeResult = result;
+        _this.getPlaces();
+      }
+    });
+  },
+
+  getPlaces: function(){
+    var _this = this;
+    var timeout = 0;
+    var index = 0;
+
+    loopRequest();
+
+    function loopRequest(){
+      var request = {
+        location: _this.routeResult.routes[0].overview_path[index],
+        radius: _this.formView.radius * 1609.34,
+        types: _this.formView.placeTypes,
+        keyword: _this.formView.keyword,
+        openNow: true,
+        minPriceLevel: 1
+      };
+
+      _this.service.nearbySearch(request, function(results,status){
+        if(status == window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
+          //
+        } else if (status == window.google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT){
+          timeout += timeout + 1;
+        } else{
+          // reset timeout
+          timeout = 0;
+
+          // for each returned place
+          for (var i = 0; i < results.length; i++) {
+            var thisPlace = results[i];
+            _this.addPlace(thisPlace);
+          }
+        }
+        // loop
+        if(index++ < _this.routeResult.routes[0].overview_path.length){
+          setTimeout(loopRequest,timeout);
+        }
+
+      });
+    }
+  },
+
+  addPlace: function(place){
+    var thisPlace = place;
+    // add to places array
+    if( _.where( this.places, {'place_id':thisPlace.place_id}).length > 0 ){
+      // dupliacte
+    } else {
+      // add to places array
+      this.places.push(thisPlace);
+
+      this.makeMapMarker(thisPlace);
+
+      // add a list item
+      var rating = thisPlace.rating ? thisPlace.rating : 'no rating';
+      var types = thisPlace.types.join(" ");
+
+      this.$('#results-section ul')
+        .append('<li class="results-item '+types+'"><a>'+thisPlace.name+'<a/><p>'+rating+'</p></li>');
+
+    }
+  },
+
+  makeMapMarker: function(thisPlace){
+    // create a map marker
+    var pin = new google.maps.Marker({
+      map: this.map,
+      position: thisPlace.geometry.location
+    });
+    if( !!thisPlace.customIcon ){
+      console.log('custom marker detected');
+      pin.setIcon(thisPlace.customIcon);
+    }
+  }
 
 });
 
