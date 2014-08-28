@@ -68,7 +68,6 @@ var MapView = Backbone.View.extend({
       if(status == google.maps.DirectionsStatus.OK){
         _this.directionsDisplay.setDirections(result);
         _this.routeResult = result;
-        console.log(_this.routeResult.routes[0].overview_path.length);
         _this.getPlaces();
       }
     });
@@ -82,7 +81,6 @@ var MapView = Backbone.View.extend({
     loopRequest();
 
     function loopRequest(){
-      console.log(index);
       var request = {
         location: _this.routeResult.routes[0].overview_path[index],
         radius: _this.formView.radius * 1609.34,
@@ -93,7 +91,6 @@ var MapView = Backbone.View.extend({
       };
 
       _this.service.nearbySearch(request, function(results,status){
-        console.log(status);
         if(status == window.google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
           //
         } else if (status == window.google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT){
@@ -105,12 +102,11 @@ var MapView = Backbone.View.extend({
           // for each returned place
           for (var i = 0; i < results.length; i++) {
             var thisPlace = results[i];
-            _this.addPlace(thisPlace)
+            _this.addPlace(thisPlace);
           }
         }
         // loop
         if(index++ < _this.routeResult.routes[0].overview_path.length){
-          console.log('comparing index: '+index);
           setTimeout(loopRequest,timeout);
         }
 
@@ -127,11 +123,7 @@ var MapView = Backbone.View.extend({
       // add to places array
       this.places.push(thisPlace);
 
-      // create a map marker
-      new window.google.maps.Marker({
-        map: this.map,
-        position: thisPlace.geometry.location
-      });
+      this.makeMapMarker(thisPlace);
 
       // add a list item
       var rating = thisPlace.rating ? thisPlace.rating : 'no rating';
@@ -141,6 +133,40 @@ var MapView = Backbone.View.extend({
         .append('<li class="results-item '+types+'"><a>'+thisPlace.name+'<a/><p>'+rating+'</p></li>');
 
     }
+  },
+
+  makeMapMarker: function(thisPlace){
+    // create a map marker
+    var pin = new google.maps.Marker({
+      map: this.map,
+      position: thisPlace.geometry.location
+    });
+    if( !!thisPlace.customIcon ){
+      console.log('custom marker detected');
+      pin.setIcon(thisPlace.customIcon);
+    }
+  },
+
+  updateLocation: function(position){
+    console.log(position);
+    this.makeMapMarker({
+      geometry:{
+        location: {
+          lat:position.coords.latitude,
+          lng: position.coords.longitude    
+        }
+      }
+    });
+
+    // this.makeMapMarker({
+    //   geometry: {
+    //     location: {
+    //       lat:position.coords.latitude,
+    //       lng:position.coords.longitude
+    //     }
+    //   },
+    //   customIcon: 'location-marker.png'
+    // });
   }
 
 });

@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 /*jshint node: true*/
 var $ = require('jquery');
 var Backbone = require('backbone');

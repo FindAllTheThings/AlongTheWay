@@ -11,14 +11,14 @@ $(function(){
 
     $('#map-canvas').html(mapView.el);
 
-    // // bind handle
-    // $('#overlay-handle').on('click',function(){
-    //   $('#options-wrapper').toggleClass('open');
-    // });
+    function watchLocation(){
+      if(navigator.geolocation){
+        navigator.geolocation.watchPosition(mapView.updateLocation);
+      } else {
+        console.log('location services unavailable');
+      }
+    }
 
-    // // close overlay on execute
-    // $('#go').on('click', function(){
-    //   $('#options-wrapper').toggleClass('open');
-    // });
+    watchLocation();
 
 });
