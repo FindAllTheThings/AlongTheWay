@@ -1,0 +1,60 @@
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="bundle.css" />
+
+    <title>Along the Way</title>
+
+  </head>
+
+  <body>
+    <div id="options-wrapper">
+        <div id="opt-inner-wrapper">
+            <p>Options</p>
+            <div id="panel">
+              <label>Start<input id="address" type="textbox"></label>
+              <label>End<input id="address2" type="textbox"></label>
+              <label>Radius<input id="radius" type="textbox"></label>
+              <input type="button" value="Directions" onclick="calcRoute()">
+
+              <select id="choose">
+                <option value="restaurant">Restaurant</option>
+                <option value="bank">Bank</option>
+                <option value="lodging">Lodging</option>
+                <option value="store">Store</option>
+              </select>
+            </div>
+        </div>
+        <div id="overlay-handle">
+            <a id="show-hide-button">show/hide</a>
+        </div>
+    </div>
+
+
+    <div id="map-wrapper">
+      <div id="map-canvas"></div>
+    </div>
+
+    <div id="results-section">
+      <div id="results-item" class=""></div>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://maps.google.com/maps/api/js?sensor=true&libraries=places" type="text/javascript"></script>
+    <script src="dist/js/bootstrap.min.js"></script>
+    <script charset="utf-8">
+      $(function(){
+        $('#show-hide-button').on('click',function(){
+          $('#options-wrapper').toggleClass('open');
+        });
+      });
+    </script>
+
+</body>
+</html>
