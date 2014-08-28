@@ -4,7 +4,7 @@ var Backbone = require('backbone');
 var $ = require('jquery');
 Backbone.$ = $;
 
-var Map = Backbone.Model.extend({
+var MapModel = Backbone.Model.extend({
   defaults: {
     title: 'default title',
     options: {
@@ -14,4 +14,4 @@ var Map = Backbone.Model.extend({
   }
 });
 
-module.exports = Map;
+module.exports = MapModel;

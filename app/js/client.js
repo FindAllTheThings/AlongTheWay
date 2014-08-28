@@ -1,11 +1,12 @@
+'use strict';
+/*jshint node: true */
 var $ = require('jquery');
-var Map = require('./maps/models/map-model');
+var MapModel = require('./maps/models/map-model');
 var MapView = require('./maps/views/map-view');
-var FormView = require('./maps/views/form-view');
 
-var map = new Map();
+var map = new MapModel();
 var mapView = new MapView({model: map});
-var formView = new FormView();
+
 
 $(function(){
 
