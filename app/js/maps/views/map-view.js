@@ -13,7 +13,8 @@ var MapView = Backbone.View.extend({
   places: [],
   events: {
     "click #overlay-handle": "show",
-    "click #go":"getRoute"
+    "click #go":"getRoute",
+    "click #back-to-top": "goBackToTop"
   },
 
   initialize: function(){
@@ -181,6 +182,10 @@ var MapView = Backbone.View.extend({
         _this.infowindow.open(_this.map, pin);
       });
     }
+  },
+
+  goBackToTop: function(){
+    window.scrollTo(0,0);
   }
 
 });
