@@ -1,0 +1,42 @@
+#results-section{
+  min-width: 320px;
+  max-width:700px;
+  margin:0 auto;
+}
+#results-section ul{
+  list-style:none;
+}
+.results-item{
+  min-width: 320px;
+  width: auto;
+  padding:5px 5px 5px 75px;
+  margin:5px;
+  border:1px solid #ccc;
+  background-position:left center;
+  background-repeat:no-repeat;
+  background-size: contain;
+}
+
+.food {
+background-image:url('icons/utensils.png');
+}
+
+.restaurant{
+background-image: url('icons/utensils.png');
+}
+
+.gas{
+background-image: url('icons/gas.png');
+}
+
+.lodging{
+background-image: url('icons/bed.png');
+}
+
+.store{
+background-image: url('icons/shopping-cart.png');
+}
+
+.atm{
+background-image: url('icons/money.png');
+}
