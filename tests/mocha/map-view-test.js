@@ -5,10 +5,10 @@ var Backbone = require('backbone');
 var sinon = require('sinon');
 var expect = chai.expect;
 
-var MapView = require('../../../app/js/maps/views/map-view');
+var MapView = require('../../app/js/maps/views/map-view');
 
 describe('Backbone map view', function() {
-  before(function(done), {
+  before(function(done) {
     sinon.spy(MapView.prototype, 'render');
     done();
   });

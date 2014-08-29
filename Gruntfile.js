@@ -39,12 +39,20 @@ module.exports = function(grunt) {
         },
         src: ['app/js/**/*.js'],
         dest: 'dist/bundle.js'
+      },
+      test: {
+        options: {
+          transform: ['hbsfy', 'debowerify'],
+          debug: true
+        },
+        src: ['tests/mocha/**/*.js'],
+        dest: 'tests/testbundle.js'
       }
-    },
+    }
 
   });
 
-  grunt.registerTask('build:dev', [ 'jshint:dev', 'clean:dev', 'copy:dev']);
+  // grunt.registerTask('build:dev', [ 'jshint:dev', 'clean:dev', 'copy:dev']);
   grunt.registerTask('build:d', ['clean:dev', 'copy:dev', 'concat:dev', 'browserify']);
-
+  grunt.registerTask('buildtest', ['browserify:test', 'build:d']);
 };

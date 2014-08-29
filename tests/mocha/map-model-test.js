@@ -5,7 +5,7 @@ var sinon = require('sinon');
 var Backbone = require('backbone');
 var expect = chai.expect;
 
-var Map = require('../../../app/js/maps/models/map-model');
+var Map = require('../../app/js/maps/models/map-model');
 
 describe('Map model', function(){
   before(function(done) {
