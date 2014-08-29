@@ -5,6 +5,7 @@
 }
 #results-section ul{
   list-style:none;
+  padding:0;
 }
 .results-item{
   min-width: 320px;
