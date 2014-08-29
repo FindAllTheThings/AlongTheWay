@@ -11,11 +11,13 @@ var FormView = require('./form-view');
 var MapView = Backbone.View.extend({
   id: 'map-view',
   places: [],
+  markers: [],
   events: {
     "click #overlay-handle": "show",
     "click #go":"getRoute",
     "click #back-to-top": "goBackToTop",
-    "click .mapPin" : "addDetails"
+    "click .mapPin" : "addDetails",
+    "click #clear": "deleteMarkers"
   },
 
   initialize: function(){
@@ -39,6 +41,8 @@ var MapView = Backbone.View.extend({
       _this.service = new _this.google.maps.places.PlacesService(_this.map);
       _this.directionsService = new _this.google.maps.DirectionsService();
       _this.infowindow = new _this.google.maps.InfoWindow();
+      _this.autocomplete1 = new google.maps.places.Autocomplete(document.getElementById('address'))
+      _this.autocomplete2 = new google.maps.places.Autocomplete(document.getElementById('address2'))
       // initialize browser's geolocation service
       _this.initializeGeolocation();
     });
@@ -203,6 +207,7 @@ var MapView = Backbone.View.extend({
       _this.infowindow.setContent('<p><a class="mapPin" href="#'+ thisPlace.place_id + '">' + thisPlace.name + '</a></p>');
       _this.infowindow.open(_this.map, pin);
     });
+    this.markers.push(pin);
   },
 
   addDetails:function(e){
@@ -211,12 +216,7 @@ var MapView = Backbone.View.extend({
     console.log(this.places);
     var place = _.where(this.places, {'place_id': e.target.hash.substring(1)});
     console.log(place);
-    var request = {
-      placeId: place[0].place_id
-    }
-    this.service.getDetails(request, function (results, status) {
-      console.log(results)
-      var details = '' + results.formatted_address;
+      var details = '' + place[0].vicinity;
       li.find('.details').html(details);
   
   },
@@ -228,7 +228,18 @@ var MapView = Backbone.View.extend({
 
   goBackToTop: function(){
     window.scrollTo(0,0);
+  },
+
+  setAllMap: function(map) {
+     for (var i = 0; i < this.markers.length; i++) {
+    this.markers[i].setMap(map);
   }
+  },
+
+  deleteMarkers: function() {
+    this.setAllMap(null);
+    this.markers = [];
+  }  
 
 });
 
