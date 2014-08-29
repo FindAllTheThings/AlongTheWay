@@ -14,7 +14,8 @@ var MapView = Backbone.View.extend({
   events: {
     "click #overlay-handle": "show",
     "click #go":"getRoute",
-    "click #back-to-top": "goBackToTop"
+    "click #back-to-top": "goBackToTop",
+    "click .mapPin" : "addDetails"
   },
 
   initialize: function(){
@@ -175,8 +176,12 @@ var MapView = Backbone.View.extend({
     var rating = thisPlace.rating ? thisPlace.rating : 'no rating';
     var types = thisPlace.types.join(' ');
 
+    var request = {
+      placeId: thisPlace.place_id
+    }
+
     this.$('#results-section ul')
-      .append('<li class="results-item '+types+'"><a>'+thisPlace.name+'<a/><p>'+rating+'</p></li>');
+      .append('<li class="results-item '+types+'" id ="' + thisPlace.place_id + '"><a>'+thisPlace.name+'<a/><p>'+rating+'</p><div class="details"></div></li>');
   },
 
   makeMapMarker: function(thisPlace){
@@ -195,9 +200,25 @@ var MapView = Backbone.View.extend({
 
     // add info box
     this.google.maps.event.addListener(pin,'click',function(){
-      _this.infowindow.setContent('<p>'+thisPlace.name+'</p>');
+      _this.infowindow.setContent('<p><a class="mapPin" href="#'+ thisPlace.place_id + '">' + thisPlace.name + '</a></p>');
       _this.infowindow.open(_this.map, pin);
     });
+  },
+
+  addDetails:function(e){
+    //console.log(e.target.hash);
+    var li = this.$(e.target.hash);
+    console.log(this.places);
+    var place = _.where(this.places, {'place_id': e.target.hash.substring(1)});
+    console.log(place);
+    var request = {
+      placeId: place[0].place_id
+    }
+    this.service.getDetails(request, function (results, status) {
+      console.log(results)
+      var details = '' + results.formatted_address;
+      li.find('.details').html(details);
+  
   },
 
   updateProgress: function(index){
