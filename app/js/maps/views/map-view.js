@@ -27,14 +27,18 @@ var MapView = Backbone.View.extend({
 
   loader: function() {
     var _this = this;
+
     GoogleMapsLoader.onLoad(function(google){
+      // cache the google maps object to view
       _this.google = google;
+      // initialize services
       _this.map = new _this.google.maps.Map( _this.$('#map-wrapper').get(0), _this.model.attributes.options);
       _this.directionsDisplay = new _this.google.maps.DirectionsRenderer();
       _this.directionsDisplay.setMap(_this.map);
       _this.service = new _this.google.maps.places.PlacesService(_this.map);
       _this.directionsService = new _this.google.maps.DirectionsService();
       _this.infowindow = new _this.google.maps.InfoWindow();
+      // initialize browser's geolocation service
       _this.initializeGeolocation();
     });
   },
@@ -48,7 +52,8 @@ var MapView = Backbone.View.extend({
           geometry:{
             location: p
           },
-          customIcon: 'location-marker.png'
+          customIcon: 'icons/location-marker.png',
+          name: 'You are here!'
         });
       });
     } else {
@@ -75,21 +80,29 @@ var MapView = Backbone.View.extend({
 
   getRoute: function(){
     var _this = this;
+
+    // show/hide form
     this.show();
 
+    // update route paramaters
     this.formView.getRouteParams();
     this.formView.getPlacesParams();
 
+    // create a request object
     var request = {
       origin: this.formView.origin,
       destination: this.formView.destination,
       travelMode: _this.google.maps.DirectionsTravelMode.DRIVING
     };
 
+    // send route solution request to API
     this.directionsService.route(request, function(result,status){
       if(status == _this.google.maps.DirectionsStatus.OK){
+        // render route solution
         _this.directionsDisplay.setDirections(result);
+        // cache result to view
         _this.routeResult = result;
+        // get places
         _this.getPlaces();
       }
     });
@@ -103,6 +116,7 @@ var MapView = Backbone.View.extend({
     loopRequest();
 
     function loopRequest(){
+      // create request object
       var request = {
         location: _this.routeResult.routes[0].overview_path[index],
         radius: _this.formView.radius * 1609.34,
@@ -114,9 +128,8 @@ var MapView = Backbone.View.extend({
       if(request.types === 'restaurant') request.minPriceLevel = 1;
 
       _this.service.nearbySearch(request, function(results,status){
-        if(status == _this.google.maps.places.PlacesServiceStatus.ZERO_RESULTS){
-          // console.log('status: ' + status);
-        } else if (status == _this.google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT){
+        if (status === 'OVER_QUERY_LIMIT'){
+          // gradually increase timeout
           timeout += timeout + 1;
         } else{
           // reset timeout
@@ -128,12 +141,11 @@ var MapView = Backbone.View.extend({
             _this.addPlace(thisPlace);
           }
         }
-        // loop
 
-        var percentProgress = index/_this.routeResult.routes[0].overview_path.length * 100;
-        _this.$('#progress-bar').css('width', percentProgress + '%');
-        console.log(percentProgress);
+        // update progress bar
+        _this.updateProgress(index);
 
+        // loop, with delay if API limit reached
         if(index++ < _this.routeResult.routes[0].overview_path.length){
           setTimeout(loopRequest,timeout);
         }
@@ -146,42 +158,51 @@ var MapView = Backbone.View.extend({
     var thisPlace = place;
     // add to places array
     if( _.where( this.places, {'place_id':thisPlace.place_id}).length > 0 ){
-      // dupliacte
+      // this is a dupliacte
     } else {
       // add to places array
       this.places.push(thisPlace);
 
+      // pin marker to map
       this.makeMapMarker(thisPlace);
 
       // add a list item
-      var rating = thisPlace.rating ? thisPlace.rating : 'no rating';
-      var types = thisPlace.types.join(" ");
-
-      this.$('#results-section ul')
-        .append('<li class="results-item '+types+'"><a>'+thisPlace.name+'<a/><p>'+rating+'</p></li>');
-
+      this.addListItem(thisPlace);
     }
+  },
+
+  addListItem: function(thisPlace){
+    var rating = thisPlace.rating ? thisPlace.rating : 'no rating';
+    var types = thisPlace.types.join(' ');
+
+    this.$('#results-section ul')
+      .append('<li class="results-item '+types+'"><a>'+thisPlace.name+'<a/><p>'+rating+'</p></li>');
   },
 
   makeMapMarker: function(thisPlace){
     var _this = this;
+
     // create a map marker
     var pin = new this.google.maps.Marker({
       map: this.map,
       position: thisPlace.geometry.location
     });
 
+    // set custom icon
     if( !!thisPlace.customIcon ){
       pin.setIcon(thisPlace.customIcon);
     }
 
-    if( !thisPlace.customIcon){
-      this.google.maps.event.addListener(pin,'click',function(){
-        // console.log(_this.infowindow);
-        _this.infowindow.setContent('<p>'+thisPlace.name+'</p>');
-        _this.infowindow.open(_this.map, pin);
-      });
-    }
+    // add info box
+    this.google.maps.event.addListener(pin,'click',function(){
+      _this.infowindow.setContent('<p>'+thisPlace.name+'</p>');
+      _this.infowindow.open(_this.map, pin);
+    });
+  },
+
+  updateProgress: function(index){
+    var percentProgress =   (index / this.routeResult.routes[0].overview_path.length) * 100;
+    this.$('#progress-bar').css('width', percentProgress + '%');
   },
 
   goBackToTop: function(){
